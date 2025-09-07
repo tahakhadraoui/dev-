@@ -16,19 +16,21 @@ pipeline {
         stage('Build & Push Docker Images') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                    sh '''
+                        docker login -u $DOCKER_USER -p $DOCKER_PASS
 
-                    // NestJS backend
-                    sh "docker build -t $DOCKER_REGISTRY/nestjs:$IMAGE_TAG ./ppp"
-                    sh "docker push $DOCKER_REGISTRY/nestjs:$IMAGE_TAG"
+                        # NestJS backend
+                        docker build -t $DOCKER_REGISTRY/nestjs:$IMAGE_TAG ./ppp
+                        docker push $DOCKER_REGISTRY/nestjs:$IMAGE_TAG
 
-                    // Flask service
-                    sh "docker build -t $DOCKER_REGISTRY/flask:$IMAGE_TAG ./injury-prediction-service"
-                    sh "docker push $DOCKER_REGISTRY/flask:$IMAGE_TAG"
+                        # Flask service
+                        docker build -t $DOCKER_REGISTRY/flask:$IMAGE_TAG ./injury-prediction-service
+                        docker push $DOCKER_REGISTRY/flask:$IMAGE_TAG
 
-                    // Next.js frontend
-                    sh "docker build -t $DOCKER_REGISTRY/nextjs:$IMAGE_TAG ./ecommerce-platform"
-                    sh "docker push $DOCKER_REGISTRY/nextjs:$IMAGE_TAG"
+                        # Next.js frontend
+                        docker build -t $DOCKER_REGISTRY/nextjs:$IMAGE_TAG ./ecommerce-platform
+                        docker push $DOCKER_REGISTRY/nextjs:$IMAGE_TAG
+                    '''
                 }
             }
         }
@@ -37,20 +39,29 @@ pipeline {
             steps {
                 git branch: 'main', url: "$DEPLOY_REPO"
 
-                sh """
-                sed -i 's/tag:.*/tag: $IMAGE_TAG/' charts/backend/values.yaml
-                sed -i 's/tag:.*/tag: $IMAGE_TAG/' charts/flask/values.yaml
-                sed -i 's/tag:.*/tag: $IMAGE_TAG/' charts/frontend/values.yaml
-                git add charts/backend/values.yaml charts/flask/values.yaml charts/frontend/values.yaml
-                git commit -m "Update Docker image tags to $IMAGE_TAG"
-                git push
-                """
+                sh '''
+                    # Update image tags in Helm charts
+                    sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/backend/values.yaml
+                    sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/flask/values.yaml
+                    sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/frontend/values.yaml
+
+                    git add charts/backend/values.yaml charts/flask/values.yaml charts/frontend/values.yaml
+
+                    # Commit only if there are changes
+                    git diff --cached --quiet || git commit -m "Update Docker image tags to $IMAGE_TAG"
+
+                    # Push with upstream set
+                    git push --set-upstream origin main
+                '''
             }
         }
     }
 
     post {
         always {
+            echo "Cleaning up Docker and workspace..."
+            sh 'docker system prune -af --volumes || true'
+            cleanWs()
             echo "Pipeline finished"
         }
     }
