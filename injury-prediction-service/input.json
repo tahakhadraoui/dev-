@@ -1,0 +1,12 @@
+{
+  "matchesPlayedWeek": 3,
+  "matchFrequency": 2.5,
+  "matchIntensity": 3,
+  "age": 25,
+  "bmi": 22.5,
+  "recentInjuries": "none",
+  "fitnessLevel": 4,
+  "trainingHours": 10,
+  "sleepHours": 7,
+  "stressLevel": 2
+}
