@@ -39,20 +39,23 @@ pipeline {
             steps {
                 git branch: 'main', url: "$DEPLOY_REPO"
 
-                sh '''
-                    # Update image tags in Helm charts
-                    sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/backend/values.yaml
-                    sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/flask/values.yaml
-                    sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/frontend/values.yaml
+                // Use GitHub credentials for push
+                withCredentials([usernamePassword(credentialsId: 'github-cred', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    sh '''
+                        # Update image tags in Helm charts
+                        sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/backend/values.yaml
+                        sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/flask/values.yaml
+                        sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/frontend/values.yaml
 
-                    git add charts/backend/values.yaml charts/flask/values.yaml charts/frontend/values.yaml
+                        git add charts/backend/values.yaml charts/flask/values.yaml charts/frontend/values.yaml
 
-                    # Commit only if there are changes
-                    git diff --cached --quiet || git commit -m "Update Docker image tags to $IMAGE_TAG"
+                        # Commit only if there are changes
+                        git diff --cached --quiet || git commit -m "Update Docker image tags to $IMAGE_TAG"
 
-                    # Push with upstream set
-                    git push --set-upstream origin main
-                '''
+                        # Push using credentials
+                        git push https://$GIT_USER:$GIT_PASS@github.com/tahakhadraoui/apps-deploy.git main --set-upstream
+                    '''
+                }
             }
         }
     }
