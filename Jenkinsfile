@@ -17,6 +17,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
+                        # Login to DockerHub
                         docker login -u $DOCKER_USER -p $DOCKER_PASS
 
                         # NestJS backend
@@ -37,11 +38,11 @@ pipeline {
 
         stage('Update Helm Charts in apps-deploy') {
             steps {
-                // Checkout deploy repo first
+                // Checkout deploy repo
                 git branch: 'main', url: "$DEPLOY_REPO"
 
-                // Push updates using GitHub credentials
-                withCredentials([usernamePassword(credentialsId: 'github-cred', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                // Push updates using GitHub token
+                withCredentials([usernamePassword(credentialsId: 'tahaatoken', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                     sh '''
                         # Configure Git user
                         git config user.name "Jenkins CI"
@@ -57,7 +58,7 @@ pipeline {
                         # Commit only if there are changes
                         git diff --cached --quiet || git commit -m "Update Docker image tags to $IMAGE_TAG"
 
-                        # Update origin URL with credentials for push
+                        # Set origin URL with token for push
                         git remote set-url origin https://$GIT_USER:$GIT_PASS@github.com/tahakhadraoui/apps-deploy.git
                         git push origin main --set-upstream
                     '''
