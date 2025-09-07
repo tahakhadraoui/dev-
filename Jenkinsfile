@@ -37,11 +37,16 @@ pipeline {
 
         stage('Update Helm Charts in apps-deploy') {
             steps {
+                // Checkout deploy repo first
                 git branch: 'main', url: "$DEPLOY_REPO"
 
-                // Use GitHub credentials for push
+                // Push updates using GitHub credentials
                 withCredentials([usernamePassword(credentialsId: 'github-cred', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                     sh '''
+                        # Configure Git user
+                        git config user.name "Jenkins CI"
+                        git config user.email "jenkins@yourdomain.com"
+
                         # Update image tags in Helm charts
                         sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/backend/values.yaml
                         sed -i "s/tag:.*/tag: $IMAGE_TAG/" charts/flask/values.yaml
@@ -52,8 +57,9 @@ pipeline {
                         # Commit only if there are changes
                         git diff --cached --quiet || git commit -m "Update Docker image tags to $IMAGE_TAG"
 
-                        # Push using credentials
-                        git push https://$GIT_USER:$GIT_PASS@github.com/tahakhadraoui/apps-deploy.git main --set-upstream
+                        # Update origin URL with credentials for push
+                        git remote set-url origin https://$GIT_USER:$GIT_PASS@github.com/tahakhadraoui/apps-deploy.git
+                        git push origin main --set-upstream
                     '''
                 }
             }
