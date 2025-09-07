@@ -21,16 +21,16 @@ pipeline {
                         docker login -u $DOCKER_USER -p $DOCKER_PASS
 
                         # NestJS backend
-                        docker build -t $DOCKER_REGISTRY/nestjs:$IMAGE_TAG ./ppp
-                        docker push $DOCKER_REGISTRY/nestjs:$IMAGE_TAG
+                        docker build -t $DOCKER_REGISTRY/ppp-backend:$IMAGE_TAG ./ppp
+                        docker push $DOCKER_REGISTRY/ppp-backend:$IMAGE_TAG
 
                         # Flask service
-                        docker build -t $DOCKER_REGISTRY/flask:$IMAGE_TAG ./injury-prediction-service
-                        docker push $DOCKER_REGISTRY/flask:$IMAGE_TAG
+                        docker build -t $DOCKER_REGISTRY/flask-api:$IMAGE_TAG ./injury-prediction-service
+                        docker push $DOCKER_REGISTRY/flask-api:$IMAGE_TAG
 
                         # Next.js frontend
-                        docker build -t $DOCKER_REGISTRY/nextjs:$IMAGE_TAG ./ecommerce-platform
-                        docker push $DOCKER_REGISTRY/nextjs:$IMAGE_TAG
+                        docker build -t $DOCKER_REGISTRY/next-frontend:$IMAGE_TAG ./ecommerce-platform
+                        docker push $DOCKER_REGISTRY/next-frontend:$IMAGE_TAG
                     '''
                 }
             }
