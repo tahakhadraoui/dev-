@@ -23,7 +23,7 @@ pipeline {
                     sh "docker push $DOCKER_REGISTRY/nestjs:$IMAGE_TAG"
 
                     // Flask service
-                    sh "docker build -t $DOCKER_REGISTRY/flask:$IMAGE_TAG ./ppp/injury-prediction-service"
+                    sh "docker build -t $DOCKER_REGISTRY/flask:$IMAGE_TAG ./injury-prediction-service"
                     sh "docker push $DOCKER_REGISTRY/flask:$IMAGE_TAG"
 
                     // Next.js frontend
