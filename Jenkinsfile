@@ -38,10 +38,10 @@ pipeline {
                 git branch: 'main', url: "$DEPLOY_REPO"
 
                 sh """
-                sed -i 's/tag:.*/tag: $IMAGE_TAG/' helm-charts/nestjs/values.yaml
+                sed -i 's/tag:.*/tag: $IMAGE_TAG/' helm-charts/backend/values.yaml
                 sed -i 's/tag:.*/tag: $IMAGE_TAG/' helm-charts/flask/values.yaml
-                sed -i 's/tag:.*/tag: $IMAGE_TAG/' helm-charts/nextjs/values.yaml
-                git add helm-charts/nestjs/values.yaml helm-charts/flask/values.yaml helm-charts/nextjs/values.yaml
+                sed -i 's/tag:.*/tag: $IMAGE_TAG/' helm-charts/frontend/values.yaml
+                git add helm-charts/backend/values.yaml helm-charts/flask/values.yaml helm-charts/frontend/values.yaml
                 git commit -m "Update Docker image tags to $IMAGE_TAG"
                 git push
                 """
