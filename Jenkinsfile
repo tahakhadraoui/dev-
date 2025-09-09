@@ -4,7 +4,7 @@ pipeline {
         DOCKER_REGISTRY = "tahakhadraoui"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DEPLOY_REPO = "https://github.com/tahakhadraoui/apps-deploy.git"
-        NEXT_PUBLIC_API_URL = "http://a8fef74e3c5774262996ac6cebd4537f-127422608.us-east-1.elb.amazonaws.com"
+        NEXT_PUBLIC_API_URL = "https://a8fef74e3c5774262996ac6cebd4537f-127422608.us-east-1.elb.amazonaws.com"
     }
 
     stages {
