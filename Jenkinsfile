@@ -4,7 +4,7 @@ pipeline {
         DOCKER_REGISTRY = "tahakhadraoui"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DEPLOY_REPO = "https://github.com/tahakhadraoui/apps-deploy.git"
-        NEXT_PUBLIC_API_URL = "http://ppp-backend.my-namespace.svc.cluster.local:3001"
+        NEXT_PUBLIC_API_URL = "http://backend-service.my-namespace.svc.cluster.local:80"
     }
 
     stages {
