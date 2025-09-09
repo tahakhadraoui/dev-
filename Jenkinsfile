@@ -4,6 +4,7 @@ pipeline {
         DOCKER_REGISTRY = "tahakhadraoui"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DEPLOY_REPO = "https://github.com/tahakhadraoui/apps-deploy.git"
+        NEXT_PUBLIC_API_URL = "http://a8fef74e3c5774262996ac6cebd4537f-127422608.us-east-1.elb.amazonaws.com"
     }
 
     stages {
@@ -28,8 +29,9 @@ pipeline {
                         docker build -t $DOCKER_REGISTRY/flask-api:$IMAGE_TAG ./injury-prediction-service
                         docker push $DOCKER_REGISTRY/flask-api:$IMAGE_TAG
 
-                        # Next.js frontend
-                        docker build -t $DOCKER_REGISTRY/next-frontend:$IMAGE_TAG ./ecommerce-platform
+                        # Next.js frontend with build arg
+                        docker build --build-arg NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+                          -t $DOCKER_REGISTRY/next-frontend:$IMAGE_TAG ./ecommerce-platform
                         docker push $DOCKER_REGISTRY/next-frontend:$IMAGE_TAG
                     '''
                 }
