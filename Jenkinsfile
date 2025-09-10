@@ -4,7 +4,8 @@ pipeline {
         DOCKER_REGISTRY = "tahakhadraoui"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DEPLOY_REPO = "https://github.com/tahakhadraoui/apps-deploy.git"
-        NEXT_PUBLIC_API_URL = "http://backend-service.my-namespace.svc.cluster.local:80"
+        NEXT_PUBLIC_API_URL = "https://backend.3.208.59.96.sslip.io"
+
     }
 
     stages {
