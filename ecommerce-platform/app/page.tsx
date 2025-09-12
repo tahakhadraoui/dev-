@@ -79,7 +79,7 @@ export default function HomePage() {
               ⚽ Football Collection 2025
             </Badge>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
-              Football Excellence
+              Football Excellence hi 
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Discover premium football products designed for champions. Elevate your game with our professional-grade
